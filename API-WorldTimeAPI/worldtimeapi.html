@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Time Zone API</title>
+	
+	<style>
+	body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+div {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+}
+	</style>
+
+</head>
+
+<body>
+    <div>
+        <label for="timezone-select">Seleciona Time Zone:</label>
+        <select id="timezone-select">
+            <option value="">--Selecione Time Zone--</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="utc_offset">UTC Offset:</label>
+        <input type="text" id="utc_offset" readonly>
+
+        <label for="timezone">Timezone:</label>
+        <input type="text" id="timezone" readonly>
+
+        <label for="day_of_week">Day of Week:</label>
+        <input type="text" id="day_of_week" readonly>
+
+        <label for="day_of_year">Day of Year:</label>
+        <input type="text" id="day_of_year" readonly>
+
+        <label for="datetime">Datetime:</label>
+        <input type="text" id="datetime" readonly>
+
+        <label for="utc_datetime">UTC Datetime:</label>
+        <input type="text" id="utc_datetime" readonly>
+
+        <label for="unixtime">Unixtime:</label>
+        <input type="text" id="unixtime" readonly>
+
+        <label for="raw_offset">Raw Offset:</label>
+        <input type="text" id="raw_offset" readonly>
+
+        <label for="week_number">Week Number:</label>
+        <input type="text" id="week_number" readonly>
+
+        <label for="dst">DST:</label>
+        <input type="text" id="dst" readonly>
+
+        <label for="abbreviation">Abbreviation:</label>
+        <input type="text" id="abbreviation" readonly>
+
+        <label for="client_ip">Client IP:</label>
+        <input type="text" id="client_ip" readonly>
+    </div>
+	
+	<script>
+	document.addEventListener("DOMContentLoaded", () => {
+    //console.log("JavaScript is loaded and running");
+	const timezoneSelect = document.getElementById("timezone-select");
+
+    // Carregar a lista de timezones da API
+    fetch('https://worldtimeapi.org/api/timezone')
+        .then(response => response.json())
+        .then(timezones => {
+            timezones.forEach(timezone => {
+                const option = document.createElement("option");
+                option.value = timezone;
+                option.textContent = timezone;
+                timezoneSelect.appendChild(option);
+				console.log(timezone);
+            });
+        })
+        .catch(error => console.error('Error fetching timezones:', error));
+
+    // Manipular a seleção do timezone
+    timezoneSelect.addEventListener("change", function() {
+        const selectedTimezone = this.value;
+		
+
+        if (selectedTimezone) {
+            fetch(`https://worldtimeapi.org/api/timezone/${selectedTimezone}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("utc_offset").value = data.utc_offset;
+                    document.getElementById("timezone").value = data.timezone;
+                    document.getElementById("day_of_week").value = data.day_of_week;
+                    document.getElementById("day_of_year").value = data.day_of_year;
+                    document.getElementById("datetime").value = data.datetime;
+                    document.getElementById("utc_datetime").value = data.utc_datetime;
+                    document.getElementById("unixtime").value = data.unixtime;
+                    document.getElementById("raw_offset").value = data.raw_offset;
+                    document.getElementById("week_number").value = data.week_number;
+                    document.getElementById("dst").value = data.dst;
+                    document.getElementById("abbreviation").value = data.abbreviation;
+                    document.getElementById("client_ip").value = data.client_ip;
+                })
+                .catch(error => console.error('Error fetching timezone data:', error));
+        }
+    });
+});
+
+	</script>
+	
+</body>
+</html>
